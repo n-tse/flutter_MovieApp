@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+void main() async {
+  // load environment variables before running the app
+  await dotenv.load();
   runApp(const MyApp());
 }
+
+final apiKey = dotenv.env['API_KEY'];
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
