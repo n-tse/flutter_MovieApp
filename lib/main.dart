@@ -7,6 +7,7 @@ void main() {
 }
 
 const apiKey = "a737bbb41f7c760a02566969ed572446";
+const String imagePathPrefix = 'https://image.tmdb.org/t/p/w500/';
 
 class MovieApp extends StatelessWidget {
   const MovieApp({Key? key}) : super(key: key);
@@ -34,7 +35,7 @@ class MoviesListing extends StatefulWidget {
 }
 
 class _MoviesListingState extends State<MoviesListing> {
-  List<dynamic>? movies;
+  List<MovieModel> movies = [];
 
   @override
   void initState() {
@@ -56,39 +57,36 @@ class _MoviesListingState extends State<MoviesListing> {
       setState(() {
         List<dynamic> results = decodedResponse['results'];
         for (var element in results) {
-          movies?.add(MovieModel.fromJson(element));
+          movies.add(MovieModel.fromJson(element));
         }
         // movies = decodedResponse['results'];
       });
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
+@override
+Widget build(BuildContext context) {
+  // return Scaffold(
+  //   body: SingleChildScrollView(
+  //     child: Column(
+  //       children: movies != null
+  //           ? movies!.map((movie) => MovieTile(movies!, index)).toList()
+  //           : [const Center(child: CircularProgressIndicator())],
+  //     ),
+  //   ),
+  // );
     return Scaffold(
-      body: SingleChildScrollView(
-        child: movies != null
-            ? Column(
-                children: movies!
-                    .map((movie) => ListTile(
-                          title: Text(movie['title']),
-                        ))
-                    .toList(),
-              )
-            : const Center(child: CircularProgressIndicator()),
+      body: ListView.builder(
+        itemCount: movies.length,
+        itemBuilder: (context, index) {
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: MovieTile(movies, index),
+            // child: Text(movies[index]["title"] ?? ''),
+          );
+        },
       ),
     );
-    // return Scaffold(
-    //   body: ListView.builder(
-    //     itemCount: movies?.length ?? 0,
-    //     itemBuilder: (context, index) {
-    //       return Padding(
-    //         padding: const EdgeInsets.all(8.0),
-    //         child: Text(movies?[index]["title"] ?? ''),
-    //       );
-    //     },
-    //   ),
-    // );
   }
 }
 
@@ -96,9 +94,9 @@ class _MoviesListingState extends State<MoviesListing> {
 class MovieModel {
   final int id;
   final num popularity;
-  final int voteCount;
+  final int? voteCount;
   final bool video;
-  final String posterPath;
+  final String? posterPath;
   final String backdropPath;
   final bool adult;
   final String originalLanguage;
@@ -112,16 +110,76 @@ class MovieModel {
   MovieModel.fromJson(Map<String, dynamic> json)
       : id = json['id'],
         popularity = json['popularity'],
-        voteCount = json['voteCount'],
+        voteCount = json['vote_count'],
         video = json['video'],
-        posterPath = json['posterPath'],
+        posterPath = json['poster_path'],
         adult = json['adult'],
-        originalLanguage = json['originalLanguage'],
-        originalTitle = json['originalTitle'],
-        genreIds = json['genreIds'],
+        originalLanguage = json['original_language'] ?? 'Unknown',
+        originalTitle = json['original_title'] ?? 'Unknown',
+        genreIds = json['genre_ids'] ?? [],
         title = json['title'],
-        voteAverage = json['voteAverage'],
+        voteAverage = json['vote_average'] ?? 0,
         overview = json['overview'],
-        releaseDate = json['releaseDate'],
-        backdropPath = json['backdropPath'];
+        releaseDate = json['release_date'] ?? 'Unknown',
+        backdropPath = json['backdrop_path'] ?? 'Unknown';
+}
+
+class MovieTile extends StatelessWidget {
+  final List<MovieModel> movies;
+  final int index;
+
+  const MovieTile(this.movies, this.index);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        children: <Widget>[
+          movies[index].posterPath != null
+              ? Container(
+                  width: MediaQuery.of(context).size.width / 2,
+                  height: MediaQuery.of(context).size.height / 4,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.0),
+                    color: Colors.grey,
+                    image: DecorationImage(
+                      image: NetworkImage(imagePathPrefix +
+                          movies[index].posterPath!),
+                      fit: BoxFit.cover,
+                    ),
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Colors.grey,
+                        blurRadius: 3.0,
+                        offset: Offset(1.0, 3.0),
+                      ),
+                    ],
+                  ),
+                )
+              : Container(),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              movies[index].title,
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.w600,
+                color: Colors.black,
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(2.0),
+            child: Text("Rating: ${movies[index].voteAverage.toString()}/10"),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(movies[index].overview),
+          ),
+          Divider(color: Colors.grey.shade500),
+        ],
+      ),
+    );
+  }
 }
