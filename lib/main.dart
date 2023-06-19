@@ -128,6 +128,7 @@ class MovieTile extends StatelessWidget {
   final List<MovieModel> movies;
   final int index;
 
+  // ignore: use_key_in_widget_constructors
   const MovieTile(this.movies, this.index);
 
   @override
@@ -159,7 +160,7 @@ class MovieTile extends StatelessWidget {
                 )
               : Container(),
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.only(top: 8.0, bottom: 2.0),
             child: Text(
               movies[index].title,
               style: const TextStyle(
