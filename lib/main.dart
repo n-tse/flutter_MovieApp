@@ -16,6 +16,7 @@ class MovieApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Movie App',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
@@ -67,7 +68,32 @@ class _MoviesListingState extends State<MoviesListing> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Movie App")),
+      appBar: AppBar(
+          // backgroundColor: Colors.deepPurple,
+          flexibleSpace: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Colors.deepPurple, Colors.purple],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+          ),
+          title: const Row(children: [
+            Icon(
+              Icons.theaters,
+              color: Colors.white,
+            ),
+            SizedBox(width: 6),
+            Text(
+              "Movie App",
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            )
+          ])),
       body: ListView.builder(
         itemCount: movies.length,
         itemBuilder: (context, index) {
