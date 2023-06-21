@@ -64,25 +64,16 @@ class _MoviesListingState extends State<MoviesListing> {
     }
   }
 
-@override
-Widget build(BuildContext context) {
-  // return Scaffold(
-  //   body: SingleChildScrollView(
-  //     child: Column(
-  //       children: movies != null
-  //           ? movies!.map((movie) => MovieTile(movies!, index)).toList()
-  //           : [const Center(child: CircularProgressIndicator())],
-  //     ),
-  //   ),
-  // );
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(title: const Text("Movie App")),
       body: ListView.builder(
         itemCount: movies.length,
         itemBuilder: (context, index) {
           return Padding(
             padding: const EdgeInsets.all(8.0),
             child: MovieTile(movies, index),
-            // child: Text(movies[index]["title"] ?? ''),
           );
         },
       ),
@@ -138,26 +129,29 @@ class MovieTile extends StatelessWidget {
       child: Column(
         children: <Widget>[
           movies[index].posterPath != null
-              ? Container(
-                  width: MediaQuery.of(context).size.width / 2,
-                  height: MediaQuery.of(context).size.height / 4,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10.0),
-                    color: Colors.grey,
-                    image: DecorationImage(
-                      image: NetworkImage(imagePathPrefix +
-                          movies[index].posterPath!),
-                      fit: BoxFit.cover,
-                    ),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Colors.grey,
-                        blurRadius: 3.0,
-                        offset: Offset(1.0, 3.0),
+              ? AspectRatio(
+                  aspectRatio: 2 / 3,
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height / 2,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10.0),
+                      color: Colors.grey,
+                      image: DecorationImage(
+                        image: NetworkImage(
+                            imagePathPrefix + movies[index].posterPath!),
+                        // fit: BoxFit.cover,
+                        fit: BoxFit.contain,
                       ),
-                    ],
-                  ),
-                )
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.grey,
+                          blurRadius: 3.0,
+                          offset: Offset(1.0, 3.0),
+                        ),
+                      ],
+                    ),
+                  ))
               : Container(),
           Padding(
             padding: const EdgeInsets.only(top: 8.0, bottom: 2.0),
